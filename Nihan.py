@@ -1,10 +1,38 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# ==============================================================
+#   N I H A N  –  Pre‑Attack Cloaking Tool
+# ==============================================================
+
+def nihan_logo(baslik_renk="cyan", alt_yazi=True):
+    
+    renkler = {
+        "cyan":   "\033[96m",
+        "pink":   "\033[95m",
+        "purple": "\033[95m",
+        "blue":   "\033[94m",
+        "yellow": "\033[93m",
+        "green":  "\033[92m",
+        "red":    "\033[91m",
+        "white":  "\033[97m",
+    }
+    renk = renkler.get(baslik_renk.lower(), "\033[96m")
+    reset = "\033[0m"
+
+    logo = f"""
+{renk}    ███╗   ██╗██╗██╗  ██╗ █████╗ ███╗   ██╗
+    ████╗  ██║██║██║  ██║██╔══██╗████╗  ██║
+    ██╔██╗ ██║██║███████║███████║██╔██╗ ██║
+    ██║╚██╗██║██║██╔══██║██╔══██║██║╚██╗██║
+    ██║ ╚████║██║██║  ██║██║  ██║██║ ╚████║
+    ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝{reset}
 """
-Nihan – Saldırı öncesi gizlenme aracı
-Kali Linux için hazırlanmıştır.
-"""
+    print(logo)
+    if alt_yazi:
+        print(f"{' ' * 18}{renk}♡ Made with love in Python ♡{reset}")
+    print()   
+
 
 import subprocess
 import sys
@@ -12,9 +40,6 @@ import time
 import random
 from pathlib import Path
 
-# -------------------------------------------------
-# Yardımcı fonksiyonlar
-# -------------------------------------------------
 def run_cmd(cmd, capture=False):
     """Komutu çalıştır, hata olursa çık."""
     try:
@@ -40,9 +65,7 @@ def random_delay():
     print(f"[i] {d}s bekleniyor...")
     time.sleep(d)
 
-# -------------------------------------------------
-# Gizlenme adımları
-# -------------------------------------------------
+
 def mac_spoof(iface="wlan0"):
     print("[i] MAC adresi değiştiriliyor...")
     run_cmd(sudo_cmd(["macchanger", "-r", iface]))
@@ -69,20 +92,16 @@ def ssh_tunnel(host):
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    # 30 s örnek bekleme; gerçek senaryoda daha uzun tutabilirsiniz
-    time.sleep(30)
+    time.sleep(30)         
     proc.terminate()
     print("[i] SSH tüneli kapatıldı.")
 
 def clean_logs():
     print("[i] /var/log dizini güvenli şekilde siliniyor...")
-    # srm (secure-delete) paketinin kurulu olduğunu varsayıyoruz
     run_cmd(sudo_cmd(["srm", "-r", "-z", "-m", "/var/log"]))
     random_delay()
 
-# -------------------------------------------------
-# Senaryolar
-# -------------------------------------------------
+
 def scenario_basic():
     """IP anonimleştirme + MAC spoof + basit tarama"""
     mac_spoof()
@@ -91,7 +110,7 @@ def scenario_basic():
     proxychains_scan(target)
 
 def scenario_full():
-    """Tam gizlenme: MAC, Tor, DNS‑crypt, SSH tünel, log temizleme"""
+    """Tam gizlenme: MAC + Tor + DNScrypt + SSH tünel + log temizleme"""
     mac_spoof()
     start_tor()
     start_dnscrypt()
@@ -100,6 +119,9 @@ def scenario_full():
     clean_logs()
 
 def main():
+    
+    nihan_logo("pink")          
+
     print("\n=== Nihan – Saldırı Öncesi Gizlenme ===")
     print("1 – Temel anonim tarama (MAC + Tor + proxychains)")
     print("2 – Tam gizlenme (MAC + Tor + DNScrypt + SSH tünel + log temizleme)")
@@ -116,7 +138,7 @@ def main():
     print("\n[✓] Gizlenme adımları tamamlandı.")
 
 if __name__ == "__main__":
-    # root ayrıcalıkları gereklidir
+   
     if not Path("/usr/bin/sudo").exists():
         print("[!] sudo bulunamadı – script root ayrıcalıklarıyla çalıştırılmalı.")
         sys.exit(1)
