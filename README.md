@@ -10,7 +10,7 @@ sudo apt update
 sudo apt install -y tor proxychains macchanger openssh-client dnscrypt-proxy srm
 
 # Download Nihan
-wget -O nihan.py 
+wget -O nihan.py https://github.com/tahasimsek-tr/Nihan.git
 chmod +x nihan.py
 
 
